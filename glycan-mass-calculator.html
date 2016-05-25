@@ -1,0 +1,61 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="glycan-mass-calculator">
+
+    <template>
+        <span>{{mass}}</span>
+    </template>
+
+    <script>
+    Polymer({
+        is: 'glycan-mass-calculator',
+        properties: {
+            decimals: {
+                type: Number,
+                value: 6
+            },
+            glycan: {
+                type: String,
+                value: "",
+                observer: '_getGlycanMolecularMass'
+            },
+            mass: {
+                type: Number,
+                value: 0.0
+            }
+        },
+        glycanMonomers: {
+            'Pen':  132.0422587,
+            'dHex': 146.0579088,
+            'Hex' : 162.0528234,
+            'HexA': 176.032088,
+            'HexNAc':203.0793725,
+            'Kdn':  250.0688674,
+            'NeuAc': 291.0954165,
+            'NeuGc': 307.0903312,
+            'Fuc' : 146.0579,
+            'S':    79.9568146,
+            'P':    79.96633
+        },
+        _getGlycanMolecularMass: function(){
+            this.mass = 0.0;
+            if(!isNaN(parseFloat(this.glycan)) && isFinite(this.glycan)){
+                this.mass = parseFloat(this.glycan)
+            }
+            monomers = this.glycan.split('|');
+            if(monomers!==[""])
+            for(var monomer in monomers){
+                if(monomers[monomer]!==""){
+                    monomer = monomers[monomer].split(':');
+                    if(monomer.length>1){
+                        this.mass+=this.glycanMonomers[monomer[0]]*monomer[1];
+                    }else{
+                        this.mass+=this.glycanMonomers[monomer[0]]
+                    }
+                }
+            }
+            this.mass = this.mass.toFixed(this.decimals);
+        }
+    });
+    </script>
+</dom-module>
